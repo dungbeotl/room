@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,8 +29,8 @@ import static android.app.Activity.RESULT_OK;
  */
 public class FavoriteFragment extends Fragment {
 
-    public static final int NEW_ACTIVITY_REQUEST_CODE = 1;
-    public FloatingActionButton fabAdd;
+    private static final int NEW_ACTIVITY_REQUEST_CODE = 1;
+    private FloatingActionButton fabAdd;
     private FavoriteAdapter favoriteAdapter;
     private RecyclerView recyclerView;
     // private FavoriteAdapter favoriteAdapter;
@@ -70,6 +71,24 @@ public class FavoriteFragment extends Fragment {
             startActivityForResult(intent, NEW_ACTIVITY_REQUEST_CODE);
         });
 
+        // Add the functionality to swipe items in the
+        // recycler view to delete that item
+        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                Contact delContact = favoriteAdapter.getContactPosition(position);
+                Toast.makeText(getActivity(), "Delete! ", Toast.LENGTH_LONG).show();
+
+                mViewModel.delete(delContact);
+            }
+        });
+            helper.attachToRecyclerView(recyclerView);
     }
 
     @Override

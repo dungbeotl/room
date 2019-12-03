@@ -63,4 +63,10 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.FConta
         mData = contact;
         notifyDataSetChanged();
     }
+
+    // method return position of Contact : delete
+    public Contact getContactPosition(int position){
+        return mData.get(position);
+    }
+
 }

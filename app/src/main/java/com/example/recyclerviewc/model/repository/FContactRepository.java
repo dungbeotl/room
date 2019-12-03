@@ -18,6 +18,7 @@ public class FContactRepository {
     public FContactRepository(Application application){
         FavoriteRoomDatabase db = FavoriteRoomDatabase.getInstance(application);
         contactFavoriteDao =db.contactFavoriteDao();
+        mAllContacts = contactFavoriteDao.getAllContacts();
 //        mAllContacts = contactFavoriteDao.getAllContacts();
     }
 
@@ -26,6 +27,7 @@ public class FContactRepository {
    public LiveData<List<Contact>> getAllContacs() {
         return contactFavoriteDao.getAllContacts();
     }
+    // insert contact
     public void insert (Contact contact) {
         new insertAsyncTask(contactFavoriteDao).execute(contact);
     }
@@ -36,10 +38,29 @@ public class FContactRepository {
         insertAsyncTask(ContactFavoriteDao dao) {
             mAsyncTaskDao = dao;
         }
-
         @Override
         protected Void doInBackground(final Contact... params) {
             mAsyncTaskDao.insert(params[0]);
+            return null;
+        }
+    }
+
+    // delete contact
+    public void delete(Contact contact){
+        new deleteAsyncTask(contactFavoriteDao).execute(contact);
+    }
+
+    private static class deleteAsyncTask extends AsyncTask<Contact,Void,Void>{
+
+        private ContactFavoriteDao mAsyncTaskDao;
+
+        public deleteAsyncTask(ContactFavoriteDao contactFavoriteDao) {
+            mAsyncTaskDao = contactFavoriteDao;
+        }
+
+        @Override
+        protected Void doInBackground(final Contact... params) {
+            mAsyncTaskDao.delete(params[0]);
             return null;
         }
     }
